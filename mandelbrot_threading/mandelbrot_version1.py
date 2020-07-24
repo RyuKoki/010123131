@@ -110,4 +110,5 @@ pygame.quit()
 # File model name : python_threading_demo-8.py
 # File adapte name(s) : python_threading_demo-2.py to python_threading_demo-5.py
 # This is the first version. I'll make another version and upload in this github.
+# Link video for output >> https://youtu.be/C4jLOQrj6_I
 ###################################################################
