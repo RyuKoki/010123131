@@ -19,12 +19,6 @@ class SplitBooleanExp:
         parentheses = '()'
         return e in parentheses
 
-    def isOpenPar(self, e):
-        return e == '('
-
-    def isClosePar(self, e):
-        return e == ')'
-
     def Spoolex(self, exp): # Spoolex stands for 'Split Boolean Expression'
         # exp is expression
         # this method for spliting all expression into list()
