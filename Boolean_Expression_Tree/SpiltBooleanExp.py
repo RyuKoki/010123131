@@ -1,7 +1,7 @@
 # SplitBoolenaExp for spliting expression
 class SplitBooleanExp:
 
-    def __init__(self): # exp is 'expression'
+    def __init__(self):
         self.exp = None
         self.load = ''
         self.result = []
@@ -26,6 +26,7 @@ class SplitBooleanExp:
         return e == ')'
 
     def Spoolex(self, exp): # Spoolex stands for 'Split Boolean Expression'
+        # exp is expression
         # this method for spliting all expression into list()
         self.exp = str(exp) # always make input 'exp' into string
 
