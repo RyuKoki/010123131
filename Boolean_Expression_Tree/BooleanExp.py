@@ -59,7 +59,7 @@ class ExpTree(ExpManage): # ExpTree stands for 'Expression Tree'
     # ExpTree is inheritance from ExpManage
     def __init__(self):
         super().__init__()
-        self.tree = []*50
+        self.tree = ['']*50
 
     def delOuterBrac(self, exp_list):
         # load list() for counting open and close bracket
@@ -84,77 +84,112 @@ class ExpTree(ExpManage): # ExpTree stands for 'Expression Tree'
 
         return exp_list
 
-    def Tree(self, exp, root=None, index_r=0): 
-        # index_r stands for 'index of root' it's initializing at 0
+    def Tree(self, exp): 
         # exp stands for 'expression' into list()
         open_brac = []
         huge_op = []
-        index_not = []
 
+        root = None
         left = None
         right = None
 
         # use 'delOuterBrac' for delete outer brac
         new_exp = self.delOuterBrac(exp)
 
+        # initial boolean values for some checking
         check = True
 
         # access all elements in expression
         for i in range(len(new_exp)):
-
-            if self.isOpenPar(new_exp[i]):
+            
+            # part 1 : part of checking couple parentheses
+            if self.isOpenPar(new_exp[i]): # check open parenthese
                 open_brac.append(i)
                 # print(open_brac)
+                # change check to False for blocking to check part 2
                 check = False
 
-            elif self.isClosePar(new_exp[i]):
+            elif self.isClosePar(new_exp[i]): # check close parenthese
                 if len(open_brac) > 1:
+                    # check this close bracket 
+                    # if it's not lasting couple
+                    # pop lasting open bracket (open_brac)
                     open_brac.pop()
                     # print(open_brac)
                 elif len(open_brac) == 1:
+                    # if it's lasting bracket
+                    # pop final open bracket
                     open_brac.pop()
                     # print(open_brac)
-                    index_end = i
-                    # print(index_end)
                     check = True
 
-            elif new_exp[i] in '&+':
-                if check == True:
-                    huge_op.append(i)
-                    root = new_exp[i]
-                    left = new_exp[:index_end+1]
-                    right = new_exp[i+1:]
+            # part 2 : checking what's an operator that is outside the couple
+            elif new_exp[i] in '&+': # checking 'OR' or 'AND' element
+                if check == True: # if finish checking couple parentheses (part 1)
+                    huge_op.append(i) # for using to check 'NOT' element
+                    root = new_exp[i] # make root is 'OR' or 'AND' element
+                    left = new_exp[:i] # make left child from index 0 to before index_end
+                    right = new_exp[i+1:] # make right child
                     # print(root, left, right)
 
-            elif new_exp[i] == '!':
-                if check == True:
-                    index_not.append(i)
-
-                    if len(huge_op) == 0:
-                        root = new_exp[i]
-                        left = new_exp[i+1:]
+            elif new_exp[i] == '!': # checking 'NOT' element
+                if check == True: # if finish checking from part 1
+                    if len(huge_op) == 0: # if don't have any 'OR' or 'AND' element
+                        root = new_exp[i] # make root is 'NOT'
+                        left = new_exp[i+1:] # make left child of root is all elements after 'NOT'
                         right = None
 
-                elif len(huge_op) > 0:
-                    pass
+                elif len(huge_op) > 0: # if outside of finish couples parentheses has 'OR' or 'AND'
+                    pass # using checking 'OR' or 'AND' element instead
 
         print('root : ', root)
         print('left : ', left)
         print('right : ', right)
+
+        # adding root, left and right in to tree list for using drawing
+        index_root = 0 # initial index of beginning of root at 0
+        index_left = (2*index_root)+1
+        index_right = (2*index_root)+2
+
+        self.tree[index_root] = root
+        self.tree[index_left] = left
+        self.tree[index_right] = right
+
+        # part 3 : recursive all branches of tree
+        # if len(left) > 1:
+            # to be continue
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 exp_tree = ExpTree()
 # exp_input = "!(1+0)"
 # exp_input = "!(!(0+I0&1))"
 # exp_input = "(I0+!I1+!(I2))&(!I0+I1+I2)"
 # exp_input = "!(I0&I1)+!(I1+I2)"
-exp_input = "(((I0&I1&!I2)+!I1)+I3)"
+# exp_input = "(((I0&I1&!I2)+!I1)+I3)"
+# exp_input = "(I1+I0)"
 print(exp_input)
 print('**********************************************************')
 split = exp_tree.Spoolex(exp_input)
 print(split)
-print('**********************************************************')
-delbrac = exp_tree.delOuterBrac(split)
-print(delbrac)
 print('**********************************************************')
 exp_tree.Tree(split)
 
