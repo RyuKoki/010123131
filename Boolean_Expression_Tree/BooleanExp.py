@@ -60,8 +60,6 @@ class ExpTree(ExpManage): # ExpTree stands for 'Expression Tree'
     def __init__(self):
         super().__init__()
         self.tree = []*50
-        self.left_child = []
-        self.right_child = []
 
     def delOuterBrac(self, exp_list):
         # load list() for counting open and close bracket
@@ -83,47 +81,60 @@ class ExpTree(ExpManage): # ExpTree stands for 'Expression Tree'
                     return(exp_list[1:-1])
         return exp_list
 
-    def Tree(self, exp, root, index_r): 
-        # index_r stands for 'index of root'
+    def Tree(self, exp, root=None, index_r=0): 
+        # index_r stands for 'index of root' it's initializing at 0
         # exp stands for 'expression' into list()
         open_brac = []
+        left = None
+        right = None
+
+        # use 'delOuterBrac' for delete outer brac
         exp = self.delOuterBrac(exp)
 
+        # initialize CHECK for checking 'what's element outside of all brackets
         CHECK = True
+
+        # access all elements in expression
         for i in exp:
 
-            if CHECK:
+            if self.isOpenPar(i):
+                open_brac.append(i)
 
-                if self.isOpenPar(i):
-                    open_brac.append(i)
-                    index_start = exp.index(i)
+            elif self.isClosePar(i):
+                if len(open_brac) > 1:
+                    # it's not last of bracket
+                    open_brac.pop()
+                elif len(open_brac) == 1:
+                    # it's last of bracket
+                    open_brac.clear()
+                    CHECK = False
 
-                elif self.isClosePar(i):
-                    if len(open_brac) > 1:
-                        open_brac.pop()
-                    elif len(open_brac) == 1:
-                        index_end = exp.index(i)
-                        open_brac.pop()
-                        CHECK = False
+            elif self.isOperand(i) or self.isOperator(i):
+                if len(open_brac) != 0:
+                    CHECK = True
+                    pass
 
-            if not CHECK:
+            if CHECK == False:
 
-                if self.isOperator(i):
-                    if (i == '&') or (i == '+'):
-                        root = i
-                        left = exp[index_start:index_end+1]
-                        right = exp[exp.index(i)+1]
+                if (i in '&+') and len(open_brac) == 0:
+                    root = i
+                    left = exp[:exp.index(i)]
+                    right = exp[exp.index(i)+1:]
 
-                        
-                        
-                        
-                        
+        print('input : ', exp)
+        print('root : ', root)
+        print('left : ', left)
+        print('right : ', right)
+
 exp_tree = ExpTree()
-expression = "!(I0&I1)+!(I1+I2)"
-split = exp_tree.Spoolex(expression)
+exp_input = "(((I0&I1&!I2)+!I1)+I3)"
+print(exp_input)
+print('**********************************************************')
+split = exp_tree.Spoolex(exp_input)
 print(split)
-outer_brac = exp_tree.delOuterBrac(split)
-print(outer_brac)
+print('**********************************************************')
+exp_tree.Tree(split)
 
+# it's has somethings wrong
 # more code will be coming soon
 # Thank you
