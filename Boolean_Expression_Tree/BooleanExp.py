@@ -85,49 +85,56 @@ class ExpTree(ExpManage): # ExpTree stands for 'Expression Tree'
         # index_r stands for 'index of root' it's initializing at 0
         # exp stands for 'expression' into list()
         open_brac = []
+
         left = None
         right = None
 
         # use 'delOuterBrac' for delete outer brac
-        exp = self.delOuterBrac(exp)
+        new_exp = self.delOuterBrac(exp)
+        # print(new_exp)
 
-        # initialize CHECK for checking 'what's element outside of all brackets
-        CHECK = True
+        check = True
 
         # access all elements in expression
-        for i in exp:
+        for i in range(len(new_exp)):
 
-            if self.isOpenPar(i):
+            if self.isOpenPar(new_exp[i]):
                 open_brac.append(i)
+                # print(open_brac)
+                check = False
 
-            elif self.isClosePar(i):
+            elif self.isClosePar(new_exp[i]):
                 if len(open_brac) > 1:
-                    # it's not last of bracket
                     open_brac.pop()
+                    # print(open_brac)
                 elif len(open_brac) == 1:
-                    # it's last of bracket
-                    open_brac.clear()
-                    CHECK = False
+                    open_brac.pop()
+                    # print(open_brac)
+                    index_end = i
+                    # print(index_end)
+                    check = True
 
-            elif self.isOperand(i) or self.isOperator(i):
-                if len(open_brac) != 0:
-                    CHECK = True
-                    pass
+            elif new_exp[i] in '&+':
+                if check == True:
+                    root = new_exp[i]
+                    left = new_exp[:index_end+1]
+                    right = new_exp[i+1:]
 
-            if CHECK == False:
+            elif new_exp[i] == '!':
+                if check == True:
+                    root = new_exp[i]
+                    left = new_exp[i+1:]
+                    right = None
 
-                if (i in '&+') and len(open_brac) == 0:
-                    root = i
-                    left = exp[:exp.index(i)]
-                    right = exp[exp.index(i)+1:]
 
-        print('input : ', exp)
+
         print('root : ', root)
         print('left : ', left)
         print('right : ', right)
 
+
 exp_tree = ExpTree()
-exp_input = "(((I0&I1&!I2)+!I1)+I3)"
+exp_input = "!(I0&I1)"
 print(exp_input)
 print('**********************************************************')
 split = exp_tree.Spoolex(exp_input)
