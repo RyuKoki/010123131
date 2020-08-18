@@ -79,19 +79,23 @@ class ExpTree(ExpManage): # ExpTree stands for 'Expression Tree'
                     # if load list() has only one open bracket and index of the last close bracket
                     # return value of exp_list from index 1 to index -1
                     return(exp_list[1:-1])
+            elif exp_list[0] == '!':
+                return exp_list
+
         return exp_list
 
     def Tree(self, exp, root=None, index_r=0): 
         # index_r stands for 'index of root' it's initializing at 0
         # exp stands for 'expression' into list()
         open_brac = []
+        huge_op = []
+        index_not = []
 
         left = None
         right = None
 
         # use 'delOuterBrac' for delete outer brac
         new_exp = self.delOuterBrac(exp)
-        # print(new_exp)
 
         check = True
 
@@ -116,29 +120,41 @@ class ExpTree(ExpManage): # ExpTree stands for 'Expression Tree'
 
             elif new_exp[i] in '&+':
                 if check == True:
+                    huge_op.append(i)
                     root = new_exp[i]
                     left = new_exp[:index_end+1]
                     right = new_exp[i+1:]
+                    # print(root, left, right)
 
             elif new_exp[i] == '!':
                 if check == True:
-                    root = new_exp[i]
-                    left = new_exp[i+1:]
-                    right = None
+                    index_not.append(i)
 
+                    if len(huge_op) == 0:
+                        root = new_exp[i]
+                        left = new_exp[i+1:]
+                        right = None
 
+                elif len(huge_op) > 0:
+                    pass
 
         print('root : ', root)
         print('left : ', left)
         print('right : ', right)
 
-
 exp_tree = ExpTree()
-exp_input = "!(I0&I1)"
+# exp_input = "!(1+0)"
+# exp_input = "!(!(0+I0&1))"
+# exp_input = "(I0+!I1+!(I2))&(!I0+I1+I2)"
+# exp_input = "!(I0&I1)+!(I1+I2)"
+exp_input = "(((I0&I1&!I2)+!I1)+I3)"
 print(exp_input)
 print('**********************************************************')
 split = exp_tree.Spoolex(exp_input)
 print(split)
+print('**********************************************************')
+delbrac = exp_tree.delOuterBrac(split)
+print(delbrac)
 print('**********************************************************')
 exp_tree.Tree(split)
 
