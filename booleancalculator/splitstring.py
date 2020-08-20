@@ -47,10 +47,10 @@ class SplitString:
         return self.result
 
 ################### T E S T ##################
-split_input = SplitString()
+# split_input = SplitString()
 # test_input = "!(1+0)"
 # test_input = "!(!(0+I0&1))"
-test_input = "(I0+!I1+!(I2))&(!I0+I1+I2)"
+# test_input = "(I0+!I1+!(I2))&(!I0+I1+I2)"
 # test_input = "!(I0&I1)+!(I1+I2)"
 # test_input = "(((I0&I1&!I2)+!I1)+I3)"
-print(split_input.split_string(test_input))
+# print(split_input.split_string(test_input))
