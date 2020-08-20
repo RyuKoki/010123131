@@ -16,11 +16,8 @@ class SplitString:
         # A - Z or a - z # 0 - 9
         return e.isalpha() or e.isdigit()
 
-    def open_bracket(self, e):
-        return e == '('
-
-    def close_bracket(self, e):
-        return e == ')'
+    def bracket(self, e):
+        return e in '()'
 
     def split_string(self, exp):
         # this method for spliting all expression into list()
@@ -30,7 +27,7 @@ class SplitString:
 
         for i in exp_input: # access each element from 'exp_input'
 
-            if self.operator(i) or self.open_bracket(i) or self.close_bracket(i):
+            if self.operator(i) or self.bracket(i):
                 # if element 'i' is operator or brackets
                 # suddenly append result
                 self.result.append(i)
@@ -40,8 +37,8 @@ class SplitString:
                 # append load until finding operator or bracket
                 self.load += i
                 # checking 'Is next of operand 'i' is operator or bracket
-                check_next_i = exp_input[exp_input.index(i)+1]
-                if self.operator(check_next_i) or self.open_bracket(check_next_i) or self.close_bracket(check_next_i):
+                check_next = exp_input[exp_input.index(i)+1]
+                if self.operator(check_next) or self.bracket(check_next):
                     # result list() keeps load
                     self.result.append(self.load)
                     # then make load empty
@@ -49,11 +46,11 @@ class SplitString:
 
         return self.result
 
-################### E X A M P L E ##################
+################### T E S T ##################
 split_input = SplitString()
 # test_input = "!(1+0)"
 # test_input = "!(!(0+I0&1))"
-# test_input = "(I0+!I1+!(I2))&(!I0+I1+I2)"
+test_input = "(I0+!I1+!(I2))&(!I0+I1+I2)"
 # test_input = "!(I0&I1)+!(I1+I2)"
-test_input = "(((I0&I1&!I2)+!I1)+I3)"
+# test_input = "(((I0&I1&!I2)+!I1)+I3)"
 print(split_input.split_string(test_input))
