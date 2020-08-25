@@ -1,7 +1,7 @@
 class BooleanTree:
 
     def __init__(self):
-        self.tree = []
+        self.tree = ['']*50
 
     def enter_expression(self, expression):
 
@@ -30,15 +30,15 @@ class BooleanTree:
 
         return expression
 
-    def create_tree(self, expression):
+    def create_tree(self, expression, index_root=0):
         open_brac = []
         huge_opertor = []
 
         new_exp = self.enter_expression(expression)
 
-        root = None
-        left = None
-        right = None
+        root = ''
+        left = ''
+        right = ''
 
         check = True
 
@@ -67,8 +67,45 @@ class BooleanTree:
                     if len(huge_opertor) == 0:
                         root = new_exp[i]
                         left = new_exp[i+1:]
-                        right = None
+                        right = ''
                     elif len(huge_opertor) > 0:
                         pass
 
-            
+        index_left = (2*index_root)+1
+        index_right = (2*index_root)+2
+
+        self.tree[index_root] = root
+        self.tree[index_left] = left
+        self.tree[index_right] = right
+
+        if len(left) > 1:
+            self.create_tree(left, index_left)
+
+        elif len(left) == 1:
+            self.tree[index_left] = left[0]
+            if len(right) > 1:
+                self.create_tree(right, index_right)
+            elif len(right) == 1:
+                self.tree[index_right] = right[0]
+
+        if len(right) > 1:
+            self.create_tree(right, index_right)
+        elif len(right) == 1:
+            self.tree[index_right] = right[0]
+
+        return self.tree
+
+from splitstring import SplitString
+split_exp = SplitString()
+boolean_tree = BooleanTree()
+# exp_input = "!(1+0)"
+# exp_input = "!(!(0+I0&1))"
+# exp_input = "(I0+!I1+!(I2))&(!I0+I1+I2)"
+exp_input = "!(I0&I1)+!(I1+I2)"
+# exp_input = "(((I0&I1&!I2)+!I1)+I3)"
+# exp_input = "(I1+I0)"
+print('Expression : ', exp_input)
+print('', '*'*50)
+exp = split_exp.split_string(exp_input)
+output = boolean_tree.create_tree(exp, 0)
+print(output)
