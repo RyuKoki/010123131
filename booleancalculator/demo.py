@@ -4,35 +4,7 @@
 # File Name : demo.py
 ############################################################
 
-import splitstring
 import pygame
-
-def enter_expression(expression):
-
-    count_open_brac = [] # list for counting open bracket(s)
-    
-    # access for all elements in expression
-    for i in range(len(expression)):
-        if expression[i] == '(':
-            # if finding '(' (open bracket), loading for checking couple(s) of brackets
-            count_open_brac.append(expression[i])
-
-        elif expression[i] == ')':
-            # if finding ')' (close bracket), pop() lastest open bracket
-            # you'll know which lastest couple of brackets
-            if len(count_open_brac) > 1:
-                # then this couple of brackets is not lastest couple
-                count_open_brac.pop()
-            elif len(count_open_brac) == 1 and i == len(expression)-1:
-                # then this close bracket is the lastest bracket
-                # so open bracket which it is its couple, it is the lastest couple
-                return expression[1:-1] # return expression in the lastest couple of bracket
-        
-        elif expression[0] == '!': # if first element is 'NOT'
-            # return original expression
-            return expression
-
-    return expression
 
 class DrawNode:
 
@@ -64,18 +36,6 @@ pygame.display.set_caption('Boolean Expression Tree')
 
 # set color 'RGB'
 WHITE = (255, 255, 255)
-
-# convert string to list()
-test_input = "!(1+0)"
-split_str = splitstring.SplitString()
-split_list = split_str.split_string(test_input)
-
-
-
-
-
-
-
 
 
 
