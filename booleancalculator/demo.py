@@ -12,11 +12,12 @@ import sys
 pygame.init()
 
 # set width and height
-WIDTH, HEIGHT = 650, 650
+WIDTH, HEIGHT = 1000, 650
 
 # set screen of program
 screen = pygame.display.set_mode( (WIDTH, HEIGHT) )
 pygame.display.set_caption('Boolean Expression Tree')
+surface = pygame.Surface( screen.get_size(), pygame.SRCALPHA )
 
 # set color 'RGB'
 WHITE = (255, 255, 255)
@@ -64,6 +65,29 @@ exp_input = "(I1+I0)"
 split_exp = split_str.split_string(exp_input)
 create_tree = boolean_t.create_tree(split_exp, 0)
 
+t_height = 4
+HIGH_EACH_LEVEL = HEIGHT // t_height
+list_num_node = []
+for i in range(t_height):
+    number_node = 2**i
+    list_num_node.append(number_node)
+screen.fill(WHITE)
+# n = list_num_node[-1]
+# RECT_W = WIDTH // n
+# for j in range(n):
+    # for k in range(t_height):
+        # rect = (j*RECT_W, k*RECT_H, RECT_W, RECT_H)
+        # pygame.draw.rect( screen, GREEN, rect, 2 )
+        # pygame.display.update()
+position_each_node = []
+for j in list_num_node:
+    continue
+# coming soon
+
+
+
+
+
 
 running = True
 while running:
@@ -72,8 +96,6 @@ while running:
         # quit program if user click quit
         if event.type == pygame.QUIT:
             running = False
-
-    screen.fill(WHITE)
 
     pygame.display.flip()
 
