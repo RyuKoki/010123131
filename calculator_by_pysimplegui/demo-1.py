@@ -61,7 +61,7 @@ while running:
         window['DISPLAY'].update(var)
 
     if event == '+':
-        operator += event
+        operator = event
     
     
 
