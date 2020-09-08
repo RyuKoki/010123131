@@ -29,15 +29,46 @@ window = sg.Window('Simple Calculator', layout=layout, background_color="#272533
 
 running = True
 var = ''
+front = ''
+operator = ''
+back = ''
 while running:
 
     event, values = window.read()
     if event == sg.WIN_CLOSED:
         break
 
-    if event in '0123456789':
+    if event in '0123456789.':
+        if event == '0':
+            if var == '' or var == '0':
+                var = '0'
+                window['DISPLAY'].update(var)
+        if var == '0':
+            var = ''
         var += event
         window['DISPLAY'].update(var)
+
+    if event == 'AC':
+        var = '0'
+        operator = ''
+        window['DISPLAY'].update(var)
+
+    if event == 'DEL':
+        if var == '' or var == '0':
+            var = '0'
+            window['DISPLAY'].update(var)
+        var = var.strip(var[-1])
+        window['DISPLAY'].update(var)
+
+    if event == '+':
+        operator += event
+    
+    
+
+
+
+
+
 
 window.close()
 # comming soon
