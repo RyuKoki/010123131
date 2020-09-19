@@ -1,5 +1,5 @@
 MESSAGES FROM DEVELOPERS!
-This is the demo version.
+This is the developing version.
 
 DEVELOPERS NAME
 1. Donyapa Praman 
