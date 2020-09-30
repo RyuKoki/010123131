@@ -1,37 +1,90 @@
+/*////////////////////////////////////////////////////////////////
+Coding By : Onpinya Phakhahutthakosol
+     with : Donyapa Praman
+@ King Mongkut's University of Technology North Bangkok
+@ CprE, KMUTNB (Bangkok)
+///////////////////////////////////////////////////////////////*/
+
 let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 
 canvas.width = window.innerWidth-100;
-canvas.height = 300;
+canvas.height = 500;
 
 ////////// PART OF PLAYER [SPIDER MAN] //////////
-let init_player_w = 75;
-let init_player_h = 75;
-let init_player_x = 50;
-let init_player_y = canvas.height-init_player_h;
-function player(x, y, width, height) {
+function Player (x, y, width, height) {
     context.fillStyle = 'green';
-    context.fillRect(x, y, width, height)
+    context.fillRect(x, y, width, height);
 }
 
-function jump() {
-    let dist_jump = 80;
-    player(init_player_x, init_player_y-dist_jump, init_player_w, init_player_h);
+/*
+'spider', 'control' and 'Movement'
+Thank you reference
+https://github.com/pothonprogramming/pothonprogramming.github.io/tree/master/content/control
+*/
+let spider = {
+
+    x:50,
+    y:0,
+    width:80,
+    height:80,
+    jumping:true,
+    y_dist:0
+
 }
 
-function slide() {
-    let dist_slide = init_player_h / 2
-    player(init_player_x, init_player_y+dist_slide, init_player_w, dist_slide);
-}
+let control = {
 
-function running(event) {
-    event = event || window.event;
-    if (event.keyCode == '39') { // button RIGHT
-        player(init_player_x, init_player_y, init_player_w, init_player_h);
-    } else if (event.keyCode == '38') { // button UP
-        jump();
-    } else if (event.keyCode == '40') { // button DOWN
-        slide();
+    up:false,
+    down:false,
+    keyListener:function (event) {
+        var key_state = (event.type == "keydown")?true:false;
+        switch (event.keyCode) {
+
+            case 38: // arrow up
+                control.up = key_state;
+            break;
+
+            case 40: // arrow down
+                control.down = key_state;
+            break;
+
+        }
     }
 }
-document.onkeydown = running;
+
+var Movement;
+Movement = function () {
+
+    if (control.up && spider.jumping == false) {
+        spider.y_dist -= 60;
+        spider.jumping = true;
+    }
+
+    spider.y_dist += 3.0;
+    spider.y += spider.y_dist;
+    spider.y_dist *= 0.9;
+
+    if (spider.y > 500 - 40 - 80) {
+        spider.jumping = false;
+        spider.y = 500 - 40 - 80;
+        spider.y_dist = 0;
+    }
+
+    context.fillStyle = '#202020';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    Player(spider.x, spider.y, spider.width, spider.height);
+
+    window.requestAnimationFrame(Movement);
+
+}
+
+window.addEventListener("keydown", control.keyListener);
+window.addEventListener("keyup", control.keyListener);
+window.requestAnimationFrame(Movement);
+
+/*////////////////////////////////////////////////////////////////
+This is the BACKEND part.
+Here is FRONTEND part :: https://github.com/DonXI/010123131/tree/master/spider
+///////////////////////////////////////////////////////////////*/
