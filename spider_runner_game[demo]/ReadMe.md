@@ -1,7 +1,7 @@
 MESSAGES FROM DEVELOPERS!
 This is the developing version.
 
-DEVELOPERS NAME
+STUDENTS' NAME
 1. Donyapa Praman 
    [https://github.com/DonXI/010123131]
 2. Onpinya Phokhahutthakosol
