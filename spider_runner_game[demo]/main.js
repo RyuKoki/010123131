@@ -11,6 +11,31 @@ let context = canvas.getContext('2d');
 canvas.width = window.innerWidth-100;
 canvas.height = 500;
 
+let control = {
+    up:false,
+    down:false,
+    open_full:false,
+    close_full:false,
+    keyListener:function (event) {
+        var key_state = (event.type == "keydown")?true:false;
+        switch (event.keyCode) {
+
+            case 38: // arrow up
+                control.up = key_state;
+            break;
+            case 40: // arrow down
+                control.down = key_state;
+            break;
+            case 33: // 'Page Up' button
+                control.open_full = key_state;
+            break;
+            case 27: // 'Esc' button
+                control.close_full = key_state;
+            break;
+        }
+    }
+}
+
 ////////// PART OF PLAYER [SPIDER MAN] //////////
 function Player (x, y, width, height) {
     context.fillStyle = 'green';
@@ -33,27 +58,35 @@ let spider = {
 
 }
 
-let control = {
+////////// PART OF ENEMY //////////
+function RandInt(start, end) {
+    return Math.floor(Math.random() * (end - start) ) + start;
+}
 
-    up:false,
-    down:false,
-    keyListener:function (event) {
-        var key_state = (event.type == "keydown")?true:false;
-        switch (event.keyCode) {
+let enemy = {
 
-            case 38: // arrow up
-                control.up = key_state;
-            break;
+    x:0,
+    y:0,
+    width:80,
+    height:80,
+    enemy_speed:0
 
-            case 40: // arrow down
-                control.down = key_state;
-            break;
+}
 
-        }
-    }
+function DrawObstacle (x, y, width, height) {
+    context.fillStyle = 'red';
+    context.fillRect(x, y, width, height);
+}
+
+let obstables = [];
+function Obstacle () {
+    enemy.x = RandInt(canvas.width + enemy.width, 100);
+    enemy.y = RandInt(100, canvas.height - enemy.height);
+    obstables.push(DrawObstacle(enemy.x, enemy.y, enemy.width, enemy.height));
 }
 
 var Movement;
+var element = document.documentElement;
 Movement = function () {
 
     if (control.up && spider.jumping == false) {
@@ -71,6 +104,13 @@ Movement = function () {
         spider.y_dist = 0;
     }
 
+    
+    if (control.open_full) {
+        element.requestFullscreen();
+    } else if (control.close_full) {
+        document.exitFullscreen();
+    }
+
     context.fillStyle = '#202020';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -83,8 +123,3 @@ Movement = function () {
 window.addEventListener("keydown", control.keyListener);
 window.addEventListener("keyup", control.keyListener);
 window.requestAnimationFrame(Movement);
-
-/*////////////////////////////////////////////////////////////////
-This is the BACKEND part.
-Here is FRONTEND part :: https://github.com/DonXI/010123131/tree/master/spider
-///////////////////////////////////////////////////////////////*/
