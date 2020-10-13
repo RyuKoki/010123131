@@ -1,125 +1,100 @@
-/*////////////////////////////////////////////////////////////////
-Coding By : Onpinya Phakhahutthakosol
-     with : Donyapa Praman
-@ King Mongkut's University of Technology North Bangkok
-@ CprE, KMUTNB (Bangkok)
-///////////////////////////////////////////////////////////////*/
-
 let canvas = document.getElementById('canvas');
 let context = canvas.getContext('2d');
 
-canvas.width = window.innerWidth-100;
-canvas.height = 500;
+canvas.width = 650;
+canvas.height = 200;
 
-let control = {
+let keyboard_input = {
     up:false,
-    down:false,
     open_full:false,
     close_full:false,
     keyListener:function (event) {
         var key_state = (event.type == "keydown")?true:false;
         switch (event.keyCode) {
 
-            case 38: // arrow up
-                control.up = key_state;
+            case 38: // arrow up button
+                keyboard_input.up = key_state;
             break;
-            case 40: // arrow down
-                control.down = key_state;
+            case 33: // page up button
+                keyboard_input.open_full = key_state;
             break;
-            case 33: // 'Page Up' button
-                control.open_full = key_state;
-            break;
-            case 27: // 'Esc' button
-                control.close_full = key_state;
+            case 27: // Esc button
+                keyboard_input.close_full = key_state;
             break;
         }
     }
 }
 
-////////// PART OF PLAYER [SPIDER MAN] //////////
-function Player (x, y, width, height) {
-    context.fillStyle = 'green';
-    context.fillRect(x, y, width, height);
-}
+class Player {
 
-/*
-'spider', 'control' and 'Movement'
-Thank you reference
-https://github.com/pothonprogramming/pothonprogramming.github.io/tree/master/content/control
-*/
-let spider = {
+    constructor (x, y, width, height) {
 
-    x:50,
-    y:0,
-    width:80,
-    height:80,
-    jumping:true,
-    y_dist:0
+        this.x = x;
+        this.y = y;
+        this.w = width;
+        this.h = height;
 
-}
+        this.dist_y = 0;
+        this.jumping = true;
 
-////////// PART OF ENEMY //////////
-function RandInt(start, end) {
-    return Math.floor(Math.random() * (end - start) ) + start;
-}
-
-let enemy = {
-
-    x:0,
-    y:0,
-    width:80,
-    height:80,
-    enemy_speed:0
-
-}
-
-function DrawObstacle (x, y, width, height) {
-    context.fillStyle = 'red';
-    context.fillRect(x, y, width, height);
-}
-
-let obstables = [];
-function Obstacle () {
-    enemy.x = RandInt(canvas.width + enemy.width, 100);
-    enemy.y = RandInt(100, canvas.height - enemy.height);
-    obstables.push(DrawObstacle(enemy.x, enemy.y, enemy.width, enemy.height));
-}
-
-var Movement;
-var element = document.documentElement;
-Movement = function () {
-
-    if (control.up && spider.jumping == false) {
-        spider.y_dist -= 60;
-        spider.jumping = true;
     }
 
-    spider.y_dist += 3.0;
-    spider.y += spider.y_dist;
-    spider.y_dist *= 0.9;
+    show () {
 
-    if (spider.y > 500 - 40 - 80) {
-        spider.jumping = false;
-        spider.y = 500 - 40 - 80;
-        spider.y_dist = 0;
+        context.beginPath();
+        context.fillStyle = 'green';
+        context.fillRect(this.x, this.y, this.w, this.h);
+        context.closePath();
+
     }
 
-    
-    if (control.open_full) {
-        element.requestFullscreen();
-    } else if (control.close_full) {
-        document.exitFullscreen();
+    jump () {
+
+        if (keyboard_input.up && this.jumping == false) {
+            this.dist_y -= 20;
+            this.jumping = true;
+        }
+
+        this.dist_y += 1.0;
+        this.y += this.dist_y;
+        this.dist_y *= 0.9;
+
+        if (this.y > 200 - 20 - 40) {
+            this.jumping = false;
+            this.y = 200 - 20 - 40;
+            this.dist_y = 0;
+        }
+
     }
 
-    context.fillStyle = '#202020';
-    context.fillRect(0, 0, canvas.width, canvas.height);
+    control () {
 
-    Player(spider.x, spider.y, spider.width, spider.height);
+        if (keyboard_input.up) {
+            this.jump();
+        }
 
-    window.requestAnimationFrame(Movement);
+        this.show();
+
+    }
 
 }
 
-window.addEventListener("keydown", control.keyListener);
-window.addEventListener("keyup", control.keyListener);
-window.requestAnimationFrame(Movement);
+var player;
+function start () {
+
+    player = new Player(25, 140, 40, 40);
+    window.requestAnimationFrame(update);
+
+}
+
+function update () {
+
+    window.requestAnimationFrame(update);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    player.control();
+}
+
+document.addEventListener("keydown", keyboard_input.keyListener);
+document.addEventListener("keyup", keyboard_input.keyListener);
+
+start();
