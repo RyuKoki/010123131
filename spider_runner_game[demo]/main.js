@@ -27,74 +27,60 @@ let keyboard_input = {
 
 class Player {
 
-    constructor (x, y, width, height) {
-
-        this.x = x;
-        this.y = y;
-        this.w = width;
-        this.h = height;
+    constructor () {
+        this.w = 40;
+        this.h = 40;
+        this.x = 25;
+        this.y = 0;
 
         this.dist_y = 0;
-        this.jumping = true;
-
-    }
-
-    show () {
-
-        context.beginPath();
-        context.fillStyle = 'green';
-        context.fillRect(this.x, this.y, this.w, this.h);
-        context.closePath();
-
     }
 
     jump () {
-
-        if (keyboard_input.up && this.jumping == false) {
-            this.dist_y -= 20;
-            this.jumping = true;
+        if (this.y == canvas.height - this.h) {
+            this.dist_y = -12;
         }
+    }
 
-        this.dist_y += 1.0;
-        this.y += this.dist_y;
-        this.dist_y *= 0.9;
-
-        if (this.y > 200 - 20 - 40) {
-            this.jumping = false;
-            this.y = 200 - 20 - 40;
-            this.dist_y = 0;
-        }
-
+    draw () {
+        context.fillStyle = 'green';
+        context.fillRect(this.x, this.y, this.w, this.h);
     }
 
     control () {
-
         if (keyboard_input.up) {
             this.jump();
         }
 
-        this.show();
+        this.y += this.dist_y;
 
+        if (this.y + this.h < canvas.height) {
+            this.dist_y += 0.75;
+        } else {
+            this.dist_y = 0;
+            this.y = canvas.height - this.h;
+        }
+
+        this.draw();
     }
 
 }
 
-var player;
+let player;
+
 function start () {
-
-    player = new Player(25, 140, 40, 40);
-    window.requestAnimationFrame(update);
-
+    player = new Player();
+    requestAnimationFrame(update);
 }
 
 function update () {
-
-    window.requestAnimationFrame(update);
+    requestAnimationFrame(update);
     context.clearRect(0, 0, canvas.width, canvas.height);
     player.control();
 }
 
 document.addEventListener("keydown", keyboard_input.keyListener);
 document.addEventListener("keyup", keyboard_input.keyListener);
+requestAnimationFrame(update);
 
 start();
