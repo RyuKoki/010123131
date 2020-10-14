@@ -4,11 +4,14 @@ let context = canvas.getContext('2d');
 canvas.width = 650;
 canvas.height = 200;
 
-let game_speed;
+let enemy;
+let enemies = [];
 let player;
 let element = document.documentElement;
+let game_speed;
 let keyboard_input = {
     up:false,
+    space:false,
     open_full:false,
     close_full:false,
     keyListener:function (event) {
@@ -23,6 +26,9 @@ let keyboard_input = {
             break;
             case 27: // Esc button
                 keyboard_input.close_full = key_state;
+            break;
+            case 32:
+                keyboard_input.space = key_state;
             break;
         }
     }
@@ -85,21 +91,62 @@ class Enemy {
         context.fillRect(this.x, this.y, this.w, this.h);
     }
 
+    run () {
+        this.x += this.dist_x;
+        this.draw();
+        this.dist_x = -game_speed;
+    }
+
 }
 
-function rand_int (min, max) {
-    return Math.round(Math.random() * (max-min) + min);
+function random_dist (min, max) {
+    return Math.round(Math.random() * (max - min) + min);
+}
+
+function spawn_enemy () {
+    let x_pos = random_dist(650, 750);
+    let y_pos = random_dist(90, 160);
+    enemy = new Enemy(x_pos, y_pos);
+    enemies.push(enemies);
 }
 
 function start () {
+    game_speed = 3;
     player = new Player(25, 0, 40, 40);
-    game_speed = 2;
     requestAnimationFrame(update);
 }
 
+let initialSpawnTimer = 200;
+let spawnTimer = initialSpawnTimer;
 function update () {
     requestAnimationFrame(update);
     context.clearRect(0, 0, canvas.width, canvas.height);
+    spawnTimer--;
+    if (spawnTimer <= 0) {
+        spawn_enemy();
+        console.log(enemies);
+        spawnTimer = initialSpawnTimer - game_speed * 8;
+    
+        if (spawnTimer < 60) {
+            spawnTimer = 60;
+        }
+    }
+
+    for (let i = 0; i < enemies.length; i++) {
+        let e = enemies[i];
+
+        if (e.x + e.w < 0) {
+            enemies.splice(i, 1);
+        }
+
+        if (player.x < e.x + e.w && player.x + player.w > e.x &&
+            player.y < e.y + e.h && player.y + player.h > e.y) {
+                enemies = [];
+                spawnTimer = initialSpawnTimer;
+                game_speed = 3;
+            }
+        e.run();
+    }
 
     player.control();
     
@@ -108,6 +155,8 @@ function update () {
     } else if (keyboard_input.close_full) {
         document.exitFullscreen();
     }
+
+    game_speed += 0.003
 
 }
 
