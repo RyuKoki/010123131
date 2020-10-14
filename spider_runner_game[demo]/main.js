@@ -67,6 +67,7 @@ class Player {
 }
 
 let player;
+let element = document.documentElement;
 
 function start () {
     player = new Player();
@@ -77,6 +78,12 @@ function update () {
     requestAnimationFrame(update);
     context.clearRect(0, 0, canvas.width, canvas.height);
     player.control();
+    
+    if (keyboard_input.open_full) {
+        element.requestFullscreen();
+    } else if (keyboard_input.close_full) {
+        document.exitFullscreen();
+    }
 }
 
 document.addEventListener("keydown", keyboard_input.keyListener);
