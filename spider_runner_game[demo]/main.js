@@ -168,7 +168,6 @@ function update () {
                 if (confirm("Game Over! \nDo you want to restart?")) {
                     enemies = [];
                     spawnTimer = initialSpawnTimer;
-                    game_speed = 3;
                     score = 0;
                 } else {
                     window.close();
@@ -189,8 +188,6 @@ function update () {
     
     count_score.text = "Score : " + (Math.floor(score/60));
     count_score.show();
-
-    game_speed += 0.001;
 
 }
 
