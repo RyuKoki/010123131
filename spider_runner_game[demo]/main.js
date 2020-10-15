@@ -9,6 +9,8 @@ let enemies = [];
 let player;
 let element = document.documentElement;
 let game_speed;
+let count_score;
+let score;
 let keyboard_input = {
     up:false,
     space:false,
@@ -47,7 +49,7 @@ class Player {
 
     jump () {
         if (this.y == canvas.height - this.h) {
-            this.dist_y = -12;
+            this.dist_y = -10;
         }
     }
 
@@ -64,7 +66,7 @@ class Player {
         this.y += this.dist_y;
 
         if (this.y + this.h < canvas.height) {
-            this.dist_y += 0.75;
+            this.dist_y += 0.4;
         } else {
             this.dist_y = 0;
             this.y = canvas.height - this.h;
@@ -99,19 +101,41 @@ class Enemy {
 
 }
 
+class Score {
+
+    constructor (score) {;
+        this.text = "Score : " + score;
+        this.x = 325;
+        this.y = 40;
+        this.align = "center";
+    }
+
+    show () {
+        context.fillStyle = 'black';
+        context.font = "20px Consolas";
+        context.textAlign = this.align;
+        context.fillText(this.text, this.x, this.y);
+    }
+}
+
 function random_dist (min, max) {
     return Math.round(Math.random() * (max - min) + min);
 }
 
 function spawn_enemy () {
     let x_pos = random_dist(650, 750);
-    let y_pos = random_dist(90, 160);
-    enemy = new Enemy(x_pos, y_pos);
-    enemies.push(enemies);
+    // let y_pos = random_dist(90, 160);
+    enemy = new Enemy(x_pos, 160);
+    enemies.push(enemy);
 }
 
 function start () {
     game_speed = 3;
+
+    context.font = "20px Consolas";
+    score = 0;
+    count_score = new Score(score);
+
     player = new Player(25, 0, 40, 40);
     requestAnimationFrame(update);
 }
@@ -141,9 +165,14 @@ function update () {
 
         if (player.x < e.x + e.w && player.x + player.w > e.x &&
             player.y < e.y + e.h && player.y + player.h > e.y) {
-                enemies = [];
-                spawnTimer = initialSpawnTimer;
-                game_speed = 3;
+                if (confirm("Game Over! \nDo you want to restart?")) {
+                    enemies = [];
+                    spawnTimer = initialSpawnTimer;
+                    game_speed = 3;
+                    score = 0;
+                } else {
+                    window.close();
+                }
             }
         e.run();
     }
@@ -156,7 +185,12 @@ function update () {
         document.exitFullscreen();
     }
 
-    game_speed += 0.003
+    score++;
+    
+    count_score.text = "Score : " + (Math.floor(score/60));
+    count_score.show();
+
+    game_speed += 0.001;
 
 }
 
