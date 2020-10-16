@@ -36,16 +36,34 @@ let keyboard_input = {
     }
 }
 
+sprite_sheet = {
+    frame_sets:[[0, 1]],
+    image:new Image()
+};
+
+enemy_sheet = {
+    image:new Image()
+};
+
+background_sheet = {
+    image: new Image()
+};
+
 class Player {
 
-    constructor (x, y, width, height) {
-        this.x = x;
-        this.y = y;
-        this.w = width;
-        this.h = height;
-
+    constructor (frame_set, speed) {
+        this.x = 25;
+        this.y = 0;
+        this.w = 50;
+        this.h = 50;
         this.dist_y = 0;
+        this.count = 0;
+        this.speed = speed;
+        this.frame = 0;
+        this.frame_index = 0;
+        this.frame_set = frame_set;
     }
+
 
     jump () {
         if (this.y == canvas.height - this.h) {
@@ -53,9 +71,9 @@ class Player {
         }
     }
 
-    draw () {
-        context.fillStyle = 'green';
-        context.fillRect(this.x, this.y, this.w, this.h);
+    show () {
+        context.drawImage(sprite_sheet.image, player.frame * this.h , 0, 
+            this.h, this.h, Math.floor(player.x), Math.floor(player.y), this.h, this.h);
     }
 
     control () {
@@ -66,13 +84,34 @@ class Player {
         this.y += this.dist_y;
 
         if (this.y + this.h < canvas.height) {
-            this.dist_y += 0.4;
+            this.dist_y += 0.25;
         } else {
             this.dist_y = 0;
             this.y = canvas.height - this.h;
         }
 
-        this.draw();
+        this.show();
+    }
+
+ 
+    change(frame_set,speed){
+        if (this.frame_set != frame_set) {
+            this.count = 0;
+            this.speed = speed;
+            this.frame_index = 0;
+            this.frame_set = frame_set;
+            this.frame = this.frame_set[this.frame_index];
+    
+          }
+    }
+
+    update(){
+        this.count ++;
+      if (this.count >= this.speed) {
+        this.count = 0;
+        this.frame_index = (this.frame_index == this.frame_set.length - 1) ? 0 : this.frame_index + 1;
+        this.frame = this.frame_set[this.frame_index];
+      }
     }
 
 }
@@ -88,14 +127,13 @@ class Enemy {
         this.dist_x = -game_speed;
     }
 
-    draw () {
-        context.fillStyle = 'red';
-        context.fillRect(this.x, this.y, this.w, this.h);
+    show () {
+        context.drawImage(enemy_sheet.image, this.x, this.y, this.w, this.h)
     }
 
     run () {
         this.x += this.dist_x;
-        this.draw();
+        this.show();
         this.dist_x = -game_speed;
     }
 
@@ -124,27 +162,28 @@ function random_dist (min, max) {
 
 function spawn_enemy () {
     let x_pos = random_dist(650, 750);
-    // let y_pos = random_dist(90, 160);
     enemy = new Enemy(x_pos, 160);
     enemies.push(enemy);
 }
 
 function start () {
     game_speed = 3;
-
     context.font = "20px Consolas";
     score = 0;
     count_score = new Score(score);
-
-    player = new Player(25, 0, 40, 40);
+    player = new Player();
     requestAnimationFrame(update);
 }
+
+
+
 
 let initialSpawnTimer = 200;
 let spawnTimer = initialSpawnTimer;
 function update () {
     requestAnimationFrame(update);
-    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(background_sheet.image, 0, 0, canvas.width, canvas.height)
+    // context.clearRect(0, 0, canvas.width, canvas.height);
     spawnTimer--;
     if (spawnTimer <= 0) {
         spawn_enemy();
@@ -163,17 +202,23 @@ function update () {
             enemies.splice(i, 1);
         }
 
-        if (player.x < e.x + e.w && player.x + player.w > e.x &&
-            player.y < e.y + e.h && player.y + player.h > e.y) {
+        if (player.x < e.x + e.w && player.x + player.w > e.x && player.y < e.y + e.h && player.y + player.h > e.y) {
                 if (confirm("Game Over! \nDo you want to restart?")) {
                     enemies = [];
                     spawnTimer = initialSpawnTimer;
+                    game_speed = 3;
                     score = 0;
                 } else {
                     window.close();
                 }
             }
         e.run();
+    }
+
+    // game_speed += 0.003
+
+    if(!player.control()){
+        player.change(sprite_sheet.frame_sets[0], 10);
     }
 
     player.control();
@@ -185,7 +230,7 @@ function update () {
     }
 
     score++;
-    
+    player.update();
     count_score.text = "Score : " + (Math.floor(score/60));
     count_score.show();
 
@@ -193,6 +238,14 @@ function update () {
 
 document.addEventListener("keydown", keyboard_input.keyListener);
 document.addEventListener("keyup", keyboard_input.keyListener);
+
 requestAnimationFrame(update);
+
+
+sprite_sheet.image.src = "sp_100x50_ver01.png";
+enemy_sheet.image.src = "01.png";
+background_sheet.image.src = "bg01.jpg"
+
+
 
 start();
